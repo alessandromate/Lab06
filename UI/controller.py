@@ -33,6 +33,7 @@ class Controller:
         return
 
     def cerca_auto(self, e):
+        self._view.lista_auto_ricerca.controls.clear()
         self._automobili = self._model.get_automobili()
         for auto in self._automobili:
             if auto.modello == self._view.input_modello_auto.value:
