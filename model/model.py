@@ -31,12 +31,28 @@ class Autonoleggio:
         self._responsabile = responsabile
 
     def get_automobili(self) -> list[Automobile] | None:
-        """
-            Funzione che legge tutte le automobili nel database
-            :return: una lista con tutte le automobili presenti oppure None
-        """
-
-        # TODO
+            #Funzione che legge tutte le automobili nel database
+            #Return: una lista con tutte le automobili presenti oppure None
+        try:
+            with get_connection() as connection:
+                cursor = connection.cursor(dictionary=True)
+                cursor.execute("SELECT * FROM automobile")
+                row = cursor.fetchone()
+                automobili = []
+                #print(row)         #lista di dizionari
+                for row in cursor:
+                    codice = row['codice']
+                    marca = row['marca']
+                    modello = row['modello']
+                    anno = row['anno']
+                    posti = row['posti']
+                    #disponibile = row['disponibile']
+                    auto= Automobile(codice, marca, modello, anno, posti)
+                    #print(auto)    #ogni auto è un ogg
+                    automobili.append(auto)
+        except Exception as e:
+            print(e)
+        return automobili
 
     def cerca_automobili_per_modello(self, modello) -> list[Automobile] | None:
         """

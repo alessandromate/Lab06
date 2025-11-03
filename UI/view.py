@@ -1,12 +1,11 @@
 import flet as ft
+import model.model
 from UI.alert import AlertManager
-
 '''
     VIEW:
     - Rappresenta l'interfaccia utente
     - Riceve i dati dal MODELLO e li presenta senza modificarli
 '''
-
 class View:
     def __init__(self, page: ft.Page):
         # Page
@@ -14,48 +13,39 @@ class View:
         self.page.title = "Lab06"
         self.page.horizontal_alignment = "center"
         self.page.theme_mode = ft.ThemeMode.DARK
-
         # Alert
         self.alert = AlertManager(page)
-
         # Controller
         self.controller = None
-
         # Elementi UI
         self.txt_titolo = None
         self.txt_responsabile = None
-
         # Non obbligatorio mettere già qui tutti gli elementi UI
 
     def show_alert(self, messaggio):
         self.alert.show_alert(messaggio)
-
     def set_controller(self, controller):
         """ Imposta il controller alla pagina """
         self.controller = controller
-
     def update(self):
         self.page.update()
-
     def load_interface(self):
         """ Crea e aggiunge Elementi di UI alla pagina e la aggiorna. """
+        #print('load va bene')
         self.txt_titolo = ft.Text(value=self.controller.get_nome(), size=38, weight=ft.FontWeight.BOLD)
         self.txt_responsabile = ft.Text(
             value=f"Responsabile: {self.controller.get_responsabile()}",
             size=16,
-            weight=ft.FontWeight.BOLD
-        )
-
+            weight=ft.FontWeight.BOLD)
         # TextField per responsabile
         self.input_responsabile = ft.TextField(value=self.controller.get_responsabile(), label="Responsabile")
-
         # ListView per mostrare la lista di auto aggiornata
         self.lista_auto = ft.ListView(expand=True, spacing=5, padding=10, auto_scroll=True)
 
-        # TextField per ricerca auto per modello
+        # TextField per ricerca auto per modello  : input del modello quando lo scrivo
         self.input_modello_auto = ft.TextField(label="Modello")
 
-        # ListView per mostrare il risultato della ricerca auto per modello
+        # ListView per mostrare il risultato della ricerca auto per modello : lista da cui prendere l output
         self.lista_auto_ricerca = ft.ListView(expand=True, spacing=5, padding=10, auto_scroll=True)
 
         # --- PULSANTI e TOGGLE associati a EVENTI ---
@@ -63,12 +53,12 @@ class View:
         pulsante_conferma_responsabile = ft.ElevatedButton("Conferma", on_click=self.controller.conferma_responsabile)
 
         # Altri Pulsanti da implementare (es. "Mostra" e "Cerca")
-        # TODO
+        pulsante_mostra_auto = ft.ElevatedButton("Mostra", on_click=self.controller.mostra_auto)
+        pulsante_cerca_auto = ft.ElevatedButton("Cerca", on_click=self.controller.cerca_auto)
 
         # --- LAYOUT ---
         self.page.add(
             self.toggle_cambia_tema,
-
             # Sezione 1
             self.txt_titolo,
             self.txt_responsabile,
@@ -80,13 +70,19 @@ class View:
                    controls=[self.input_responsabile, pulsante_conferma_responsabile],
                    alignment=ft.MainAxisAlignment.CENTER),
             ft.Divider(),
-
             # Sezione 3
-            # TODO
-
+            ft.Row(spacing=5,
+                   controls=[ft.Text("Automobili", size=20),pulsante_mostra_auto],
+                   alignment=ft.MainAxisAlignment.START),
+            self.lista_auto,
+            ft.Divider(),
             # Sezione 4
-            # TODO
-        )
+            ft.Text("Cerca Automobile", size=20),
+            ft.Row(spacing=5,
+                   controls= [self.input_modello_auto ,pulsante_cerca_auto],
+                   alignment=ft.MainAxisAlignment.START),
+            self.lista_auto_ricerca,
+            ft.Divider(),)
 
     def cambia_tema(self, e):
         self.page.theme_mode = ft.ThemeMode.DARK if self.toggle_cambia_tema.value else ft.ThemeMode.LIGHT
